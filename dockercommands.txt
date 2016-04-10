@@ -1,8 +1,8 @@
 ## To start the mysql container
-docker run --name dev-mysql -v "$PWD"/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=test123 -d mysql
+docker run --name dev-mysql -v mysql-socket:/run/mysqld -v "$PWD"/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=test123 -d mysql
 
 ## To access the sql prompt on container
 docker run -it --link some-mysql:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
 
 ## To start the apache server
-docker run -d --name dev-apache -p 80:80 --link dev-mysql:mysql -v "$PWD"/{{folder}}:/var/www/html -v "$PWD"/apache-config/sites-enabled:/etc/apache2/sites-enabled apache-dev
+docker run -d --name dev-apache -p 80:80 -v mysql-socket:/run/mysqld -v "$PWD"/html:/var/www/html -v "$PWD"/apache-config/sites-enabled:/etc/apache2/sites-enabled apache-dev
